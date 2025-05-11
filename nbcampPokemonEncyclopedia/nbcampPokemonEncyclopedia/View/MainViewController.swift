@@ -91,9 +91,10 @@ class MainViewController: UIViewController {
     
     private func bind() {
         viewModel.imageListRelay
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
-                self?.imageList = list
+                self?.imageList.append(contentsOf: list)
                 self?.collectionView.reloadData()
             }).disposed(by: dispoaseBag)
         
@@ -123,6 +124,13 @@ extension MainViewController: UICollectionViewDelegate {
         let detailView = DetailViewController(url: url)
         
         navigationController?.pushViewController(detailView, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath.row == imageList.count - 1 {
+            viewModel.fetchImageList()
+        }
     }
 }
 
