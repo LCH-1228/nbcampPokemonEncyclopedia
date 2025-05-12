@@ -23,12 +23,18 @@ class ImageCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        ImageCache.default.memoryStorage.config.totalCostLimit = 20 * 1024 * 1024
         configureUI()
         setConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
     }
     
     private func configureUI() {
@@ -48,11 +54,16 @@ class ImageCell: UICollectionViewCell {
             .replacingOccurrences(of: "/api/v2/pokemon", with: "")
             .replacingOccurrences(of: "/", with: "")
         guard let url = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png") else { return }
-        DispatchQueue.main.async { [weak self] in
-            self?.imageView.kf.setImage(
-                with: url,
-                options: [.cacheOriginalImage]
-            )
-        }
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(
+            with: url,
+            options: [
+                .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .diskCacheExpiration(.never),
+                .keepCurrentImageWhileLoading
+            ]
+        )
     }
 }
