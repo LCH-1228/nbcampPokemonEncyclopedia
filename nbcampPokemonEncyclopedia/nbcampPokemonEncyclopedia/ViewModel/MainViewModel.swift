@@ -10,19 +10,41 @@ import RxCocoa
 
 class MainViewModel {
     
+    struct Input {
+        let initialFetch: Observable<Void>
+        let scrollFetch: Observable<Void>
+    }
+    
+    struct Output {
+        let imageList: BehaviorRelay<[ListResponse.Results]>
+        let error: PublishSubject<Error>
+    }
+    
+    
     private let disposeBag = DisposeBag()
     
-    let imageListRelay = BehaviorRelay(value: [ListResponse.Results]())
-    let errorSubject = PublishSubject<Error>()
+    private let imageListRelay = BehaviorRelay(value: [ListResponse.Results]())
+    private let errorSubject = PublishSubject<Error>()
     
     private var offset = 0
     private var isLoading = false
     
-    init() {
-        fetchImageList()
+    func transform(_ input: Input) -> Output {
+        
+        let mergeStream = Observable.merge(input.initialFetch, input.scrollFetch)
+        
+        mergeStream
+            .subscribe(onNext: { [weak self] in
+                self?.fetchImageList()
+            }).disposed(by: disposeBag)
+        
+        return Output(
+            imageList: imageListRelay,
+            error: errorSubject
+        )
     }
     
-    func fetchImageList() {
+    private func fetchImageList() {
         guard !isLoading else { return }
         isLoading = true
         
@@ -33,11 +55,15 @@ class MainViewModel {
         
         NetworkManager.shared.fetch(url: url)
             .subscribe(onSuccess: { [weak self] (listResponse: ListResponse) in
-                self?.imageListRelay.accept(listResponse.results)
-                self?.offset += 20
-                self?.isLoading = false
+                guard let self else { return }
+                var priviousData = imageListRelay.value
+                priviousData.append(contentsOf: listResponse.results)
+                imageListRelay.accept(priviousData)
+                offset += 20
+                isLoading = false
             }, onFailure: { [weak self] error in
                 self?.errorSubject.onNext(error)
+                self?.isLoading = false
             }).disposed(by: disposeBag)
     }
 }

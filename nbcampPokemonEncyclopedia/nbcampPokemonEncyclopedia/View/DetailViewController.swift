@@ -12,7 +12,7 @@ import Kingfisher
 
 class DetailViewController: UIViewController {
     
-    private var viewModel: DetailViewModel?
+    private var viewModel: DetailViewModel
     
     private let disposeBag = DisposeBag()
     
@@ -35,8 +35,8 @@ class DetailViewController: UIViewController {
         return textView
     }()
     
-    init(url: URL) {
-        viewModel = DetailViewModel(url: url)
+    init(viewModel: DetailViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -88,8 +88,14 @@ class DetailViewController: UIViewController {
     }
     
     private func bind() {
-        guard let viewModel else { return }
-        viewModel.detailInfoSubject
+        let input = DetailViewModel.Input(
+            initialFetch: Observable.just(())
+        )
+        
+        let output = viewModel.transform(input)
+        
+        output.infoList
+        //UI에는 drive 사용
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] info in
                 guard let self else { return }
@@ -111,7 +117,7 @@ class DetailViewController: UIViewController {
                 
             }).disposed(by: disposeBag)
         
-        viewModel.errorSubject
+        output.error
             .subscribe(onNext: { [weak self] error in
                 self?.showAlert(error: error)
             }).disposed(by: disposeBag)

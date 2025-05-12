@@ -67,7 +67,6 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidload")
         
         configureUI()
         setConstraints()
@@ -88,17 +87,45 @@ class MainViewController: UIViewController {
             $0.edges.equalTo(view.safeAreaLayoutGuide.snp.edges)
         }
     }
+    //.asDrive(OnErrorDrvieWith: .empty())
+    //.map
+    //.drive()
     
     private func bind() {
-        viewModel.imageListRelay
-            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+        
+        // MARK: - Input
+        let input = MainViewModel.Input(
+            initialFetch: Observable.just(()),
+            scrollFetch: collectionView.rx.contentOffset
+                .filter { [weak self ] currentLocation in
+                    guard let self else { return false }
+                    let contentHeight = collectionView.contentSize.height
+                    let frameHeight = collectionView.frame.height
+                    let endLocation =  contentHeight - frameHeight
+                    let isEnd: Bool
+                    
+                    if currentLocation.y >= endLocation {
+                        isEnd = true
+                    } else {
+                        isEnd = false
+                    }
+                    
+                    return isEnd
+                }
+                .map { _ in return Void() }
+                .throttle(.milliseconds(1500), scheduler: MainScheduler.instance)
+        )
+        
+        let output = viewModel.transform(input)
+        
+        output.imageList
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
-                self?.imageList.append(contentsOf: list)
+                self?.imageList = list
                 self?.collectionView.reloadData()
             }).disposed(by: disposeBag)
         
-        viewModel.errorSubject
+        output.error
             .subscribe(onNext: { [weak self] error in
                 self?.showAlert(error: error)
             }).disposed(by: disposeBag)
@@ -121,16 +148,21 @@ extension MainViewController: UICollectionViewDelegate {
         
         let url = imageList[indexPath.row].url
         
-        let detailView = DetailViewController(url: url)
+        let detailViewMode = DetailViewModel(url: url)
+        
+        let detailView = DetailViewController(viewModel: detailViewMode)
         
         navigationController?.pushViewController(detailView, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        if indexPath.row == imageList.count - 1 {
-            viewModel.fetchImageList()
-        }
+//        if indexPath.row == imageList.count - 1 {
+//            viewModel.fetchImageList()
+//        }
+        
+        // collectionView.rx.contentOffset RXCocoa로 리펙토링
+        // throttle여기에 걸기
     }
 }
 
