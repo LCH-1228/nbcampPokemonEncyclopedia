@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import RxSwift
+import Kingfisher
 
 class DetailViewController: UIViewController {
     
@@ -91,15 +92,40 @@ class DetailViewController: UIViewController {
         viewModel.detailInfoSubject
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] info in
+                guard let self else { return }
                 guard let url = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(info[0].id).png") else { return }
-                DispatchQueue.main.async { [weak self] in
-                    self?.imageView.kf.setImage(
-                        with: url,
-                        options: [.cacheOriginalImage]
-                    )
-                    self?.configureText(with: info[0])
-                }
+                
+                imageView.kf.indicatorType = .activity
+                imageView.kf.setImage(
+                    with: url,
+                    options: [
+                        .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+                        .scaleFactor(UIScreen.main.scale),
+                        .cacheOriginalImage,
+                        .diskCacheExpiration(.never),
+                        .keepCurrentImageWhileLoading
+                    ]
+                )
+
+                configureText(with: info[0])
+                
             }).disposed(by: disposeBag)
+        
+        viewModel.errorSubject
+            .subscribe(onNext: { [weak self] error in
+                self?.showAlert(error: error)
+            }).disposed(by: disposeBag)
+    }
+    
+    private func showAlert(error: Error) {
+        let alert = UIAlertController(title: "경고",
+                                      message: error.localizedDescription,
+                                      preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { action in
+        }))
+        
+        self.present(alert, animated: true)
     }
     
     private func configureText(with input: DetailResponse) {

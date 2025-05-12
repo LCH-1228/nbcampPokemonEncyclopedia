@@ -11,7 +11,7 @@ import RxSwift
 
 class MainViewController: UIViewController {
     
-    private let dispoaseBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     private let viewModel = MainViewModel()
     
@@ -96,12 +96,12 @@ class MainViewController: UIViewController {
             .subscribe(onNext: { [weak self] list in
                 self?.imageList.append(contentsOf: list)
                 self?.collectionView.reloadData()
-            }).disposed(by: dispoaseBag)
+            }).disposed(by: disposeBag)
         
-        viewModel.errorsubject
+        viewModel.errorSubject
             .subscribe(onNext: { [weak self] error in
                 self?.showAlert(error: error)
-            }).disposed(by: dispoaseBag)
+            }).disposed(by: disposeBag)
     }
     
     private func showAlert(error: Error) {

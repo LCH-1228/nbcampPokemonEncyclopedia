@@ -13,7 +13,7 @@ class MainViewModel {
     private let disposeBag = DisposeBag()
     
     let imageListRelay = BehaviorRelay(value: [ListResponse.Results]())
-    let errorsubject = PublishSubject<Error>()
+    let errorSubject = PublishSubject<Error>()
     
     private var offset = 0
     private var isLoading = false
@@ -26,7 +26,10 @@ class MainViewModel {
         guard !isLoading else { return }
         isLoading = true
         
-        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=\(offset)") else { return }
+        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=\(offset)") else {
+            errorSubject.onNext(CustomError.InvalidURL)
+            return
+        }
         
         NetworkManager.shared.fetch(url: url)
             .subscribe(onSuccess: { [weak self] (listResponse: ListResponse) in
@@ -34,7 +37,7 @@ class MainViewModel {
                 self?.offset += 20
                 self?.isLoading = false
             }, onFailure: { [weak self] error in
-                self?.errorsubject.onNext(error)
+                self?.errorSubject.onNext(error)
             }).disposed(by: disposeBag)
     }
 }
