@@ -12,6 +12,7 @@
 		9BCD442C2DCF11990045601D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD442B2DCF11990045601D /* SnapKit */; };
 		9BCD445A2DCF1F000045601D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD44592DCF1F000045601D /* Kingfisher */; };
 		9BCD448A2DCF76570045601D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD44892DCF76570045601D /* RxCocoa */; };
+		9BF4BE602DD2F4B30021777A /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9BF4BE5F2DD2F4B30021777A /* RxDataSources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 				9BCD445A2DCF1F000045601D /* Kingfisher in Frameworks */,
 				9BCD442C2DCF11990045601D /* SnapKit in Frameworks */,
 				9BCD448A2DCF76570045601D /* RxCocoa in Frameworks */,
+				9BF4BE602DD2F4B30021777A /* RxDataSources in Frameworks */,
 				9BCD43FF2DCF02390045601D /* RxSwift in Frameworks */,
 				9BCD44242DCF02990045601D /* Alamofire in Frameworks */,
 			);
@@ -96,6 +98,7 @@
 				9BCD442B2DCF11990045601D /* SnapKit */,
 				9BCD44592DCF1F000045601D /* Kingfisher */,
 				9BCD44892DCF76570045601D /* RxCocoa */,
+				9BF4BE5F2DD2F4B30021777A /* RxDataSources */,
 			);
 			productName = nbcampPokemonEncyclopedia;
 			productReference = 9B6D91D82DCE4D8600F739E5 /* nbcampPokemonEncyclopedia.app */;
@@ -130,6 +133,7 @@
 				9BCD44222DCF02990045601D /* XCRemoteSwiftPackageReference "Alamofire" */,
 				9BCD442A2DCF11990045601D /* XCRemoteSwiftPackageReference "SnapKit" */,
 				9BCD44582DCF1F000045601D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9B6D91D92DCE4D8600F739E5 /* Products */;
@@ -391,6 +395,14 @@
 				minimumVersion = 8.3.2;
 			};
 		};
+		9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -418,6 +430,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9BCD43FD2DCF02390045601D /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
+		};
+		9BF4BE5F2DD2F4B30021777A /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

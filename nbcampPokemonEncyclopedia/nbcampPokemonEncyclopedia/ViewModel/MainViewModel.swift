@@ -16,15 +16,15 @@ class MainViewModel {
     }
     
     struct Output {
-        let imageList: BehaviorRelay<[ListResponse.Results]>
-        let error: PublishSubject<Error>
+        let collectionViewData: BehaviorRelay<SectionOfCustomData>
+        let error: PublishRelay<Error>
     }
-    
     
     private let disposeBag = DisposeBag()
     
-    private let imageListRelay = BehaviorRelay(value: [ListResponse.Results]())
-    private let errorSubject = PublishSubject<Error>()
+    private let collectionViewRelay = BehaviorRelay(value: SectionOfCustomData(header: .pokemonBall,
+                                                                               items: [CollectionViewData]()))
+    private let errorRelay = PublishRelay<Error>()
     
     private var offset = 0
     private var isLoading = false
@@ -39,8 +39,8 @@ class MainViewModel {
             }).disposed(by: disposeBag)
         
         return Output(
-            imageList: imageListRelay,
-            error: errorSubject
+            collectionViewData: collectionViewRelay,
+            error: errorRelay
         )
     }
     
@@ -49,21 +49,27 @@ class MainViewModel {
         isLoading = true
         
         guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=\(offset)") else {
-            errorSubject.onNext(CustomError.InvalidURL)
+            errorRelay.accept(CustomError.InvalidURL)
             return
         }
         
         NetworkManager.shared.fetch(url: url)
-            .subscribe(onSuccess: { [weak self] (listResponse: ListResponse) in
+            .map { (listResponse: ListResponse) -> [CollectionViewData] in
+                return listResponse.results.map{ CollectionViewData(name: $0.name, url: $0.url) }
+            }
+            .subscribe(onSuccess: { [weak self] result in
                 guard let self else { return }
-                var priviousData = imageListRelay.value
-                priviousData.append(contentsOf: listResponse.results)
-                imageListRelay.accept(priviousData)
+                let header = collectionViewRelay.value.header
+                var priviousItems = collectionViewRelay.value.items
+                priviousItems.append(contentsOf: result)
+                let data = SectionOfCustomData(header: header, items: priviousItems)
+                collectionViewRelay.accept(data)
                 offset += 20
                 isLoading = false
             }, onFailure: { [weak self] error in
-                self?.errorSubject.onNext(error)
-                self?.isLoading = false
+                guard let self else { return }
+                errorRelay.accept(error)
+                isLoading = false
             }).disposed(by: disposeBag)
     }
 }

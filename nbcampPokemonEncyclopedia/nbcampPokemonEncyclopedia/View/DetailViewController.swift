@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import RxSwift
+import RxCocoa
 import Kingfisher
 
 class DetailViewController: UIViewController {
@@ -29,10 +30,45 @@ class DetailViewController: UIViewController {
         return imageView
     }()
     
-    private let textView: UITextView = {
-        let textView = UITextView()
-        textView.backgroundColor = .clear
-        return textView
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 24, weight: .bold)
+        return label
+    }()
+    
+    private let typeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+    
+    private let heightLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+    
+    private let weightLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+    
+    private lazy var labelStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            nameLabel,
+            typeLabel,
+            heightLabel,
+            weightLabel
+        ])
+        stackView.spacing = 8
+        stackView.alignment = .center
+        stackView.axis = .vertical
+        return stackView
     }()
     
     init(viewModel: DetailViewModel) {
@@ -47,6 +83,8 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.isNavigationBarHidden = false
+        
         configureUI()
         setConstraints()
         bind()
@@ -58,7 +96,7 @@ class DetailViewController: UIViewController {
         
         [
             imageView,
-            textView
+            labelStackView
         ].forEach{ layoutView.addSubview($0) }
         
         [
@@ -74,33 +112,40 @@ class DetailViewController: UIViewController {
             $0.centerX.equalTo(layoutView.snp.centerX)
         }
         
-        textView.snp.makeConstraints {
-            $0.height.equalTo(120)
+        labelStackView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(layoutView.snp.horizontalEdges)
-            $0.top.equalTo(imageView.snp.bottom)
+            $0.top.equalTo(imageView.snp.bottom).offset(12)
         }
         
         layoutView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.horizontalEdges.equalTo(view.snp.horizontalEdges).inset(24)
-            $0.bottom.equalTo(textView.snp.bottom).offset(20)
+            $0.horizontalEdges.equalTo(view.snp.horizontalEdges).inset(40)
+            $0.bottom.equalTo(labelStackView.snp.bottom).offset(20)
         }
     }
     
     private func bind() {
+        let input = bindInput()
+        bindOutput(with: input)
+        BindUI(with: input)
+    }
+    
+    // MARK: BindInput
+    private func bindInput() -> DetailViewModel.Input {
         let input = DetailViewModel.Input(
             initialFetch: Observable.just(())
         )
-        
+        return input
+    }
+    
+    // MARK: BindOutput
+    private func bindOutput(with input: DetailViewModel.Input) {
         let output = viewModel.transform(input)
         
-        output.infoList
-        //UI에는 drive 사용
+        output.imageInfo
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] info in
+            .subscribe(onNext: { [weak self] url in
                 guard let self else { return }
-                guard let url = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(info[0].id).png") else { return }
-                
                 imageView.kf.indicatorType = .activity
                 imageView.kf.setImage(
                     with: url,
@@ -112,15 +157,37 @@ class DetailViewController: UIViewController {
                         .keepCurrentImageWhileLoading
                     ]
                 )
-
-                configureText(with: info[0])
-                
             }).disposed(by: disposeBag)
         
         output.error
             .subscribe(onNext: { [weak self] error in
                 self?.showAlert(error: error)
             }).disposed(by: disposeBag)
+    }
+    
+    // MARK: BindUI
+    private func BindUI(with input: DetailViewModel.Input) {
+        let output = viewModel.transform(input)
+        
+        output.idAndNameInfo
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.typeInfo
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(typeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.heightInfo
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(heightLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.weightInfo
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(weightLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     private func showAlert(error: Error) {
@@ -132,44 +199,5 @@ class DetailViewController: UIViewController {
         }))
         
         self.present(alert, animated: true)
-    }
-    
-    private func configureText(with input: DetailResponse) {
-        
-        guard let koreanType = PokemonKoreanType(rawValue: input.types[0].type.name)?.displayName else { return }
-        
-        let koreanName = PokemonKoreanName.getKoreanName(for: input.name)
-        
-        let height = String(format: "%.1f m", Double(input.height) / 10)
-        let weight = String(format: "%.1f kg", Double(input.weight) / 10)
-        let text = """
-            No.\(input.id) \(koreanName)
-            타입: \(koreanType)
-            키: \(height)
-            몸무게: \(weight)
-            """
-        
-        let highlightedText = ["No.\(input.id) \(koreanName)"]
-        
-        let attributedString = NSMutableAttributedString(string: text)
-        
-        let normalFont = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        let hilightedFont = UIFont.systemFont(ofSize: 24, weight: .bold)
-        
-        let textStyle = NSMutableParagraphStyle()
-        textStyle.alignment = .center
-        textStyle.lineSpacing = 8
-        
-        let range = NSRange(location: 0, length: attributedString.length)
-        attributedString.addAttribute(.font, value: normalFont, range: range)
-        attributedString.addAttribute(.foregroundColor, value: UIColor.white, range: range)
-        attributedString.addAttribute(.paragraphStyle, value: textStyle, range: range)
-        
-        for word in highlightedText {
-            let range = (text as NSString).range(of: word)
-            attributedString.addAttribute(.font, value: hilightedFont, range: range)
-        }
-        
-        textView.attributedText = attributedString
     }
 }

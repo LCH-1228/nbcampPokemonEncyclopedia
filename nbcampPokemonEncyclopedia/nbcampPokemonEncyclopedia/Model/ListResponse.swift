@@ -14,7 +14,6 @@ struct ListResponse: Decodable {
 }
 
 extension ListResponse {
-    
     struct Results: Decodable {
         let name: String
         let url : URL

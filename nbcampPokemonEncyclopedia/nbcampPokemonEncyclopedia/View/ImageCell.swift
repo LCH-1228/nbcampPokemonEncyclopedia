@@ -49,10 +49,13 @@ class ImageCell: UICollectionViewCell {
         }
     }
     
-    func configure(with data: ListResponse.Results) {
-        let id = data.url.path()
-            .replacingOccurrences(of: "/api/v2/pokemon", with: "")
-            .replacingOccurrences(of: "/", with: "")
+    func configure(with data: CollectionViewData) {
+        
+        let path = data.url.path()
+        let startIndex = path.index(path.startIndex, offsetBy: 16)
+        let endIndex = path.index(path.endIndex, offsetBy: -1)
+        let id = path[startIndex ..< endIndex]
+        
         guard let url = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png") else { return }
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
