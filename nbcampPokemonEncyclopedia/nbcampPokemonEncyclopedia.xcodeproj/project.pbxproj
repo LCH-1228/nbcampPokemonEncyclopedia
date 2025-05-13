@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9BCD43FF2DCF02390045601D /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD43FE2DCF02390045601D /* RxSwift */; };
+		9BCD44242DCF02990045601D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD44232DCF02990045601D /* Alamofire */; };
+		9BCD442C2DCF11990045601D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD442B2DCF11990045601D /* SnapKit */; };
+		9BCD445A2DCF1F000045601D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD44592DCF1F000045601D /* Kingfisher */; };
+		9BCD448A2DCF76570045601D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCD44892DCF76570045601D /* RxCocoa */; };
+		9BF4BE602DD2F4B30021777A /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9BF4BE5F2DD2F4B30021777A /* RxDataSources */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		9B6D91D82DCE4D8600F739E5 /* nbcampPokemonEncyclopedia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nbcampPokemonEncyclopedia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -14,7 +23,7 @@
 		9B6D91EA2DCE4D8700F739E5 /* Exceptions for "nbcampPokemonEncyclopedia" folder in "nbcampPokemonEncyclopedia" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				App/Info.plist,
 			);
 			target = 9B6D91D72DCE4D8600F739E5 /* nbcampPokemonEncyclopedia */;
 		};
@@ -36,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BCD445A2DCF1F000045601D /* Kingfisher in Frameworks */,
+				9BCD442C2DCF11990045601D /* SnapKit in Frameworks */,
+				9BCD448A2DCF76570045601D /* RxCocoa in Frameworks */,
+				9BF4BE602DD2F4B30021777A /* RxDataSources in Frameworks */,
+				9BCD43FF2DCF02390045601D /* RxSwift in Frameworks */,
+				9BCD44242DCF02990045601D /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +93,12 @@
 			);
 			name = nbcampPokemonEncyclopedia;
 			packageProductDependencies = (
+				9BCD43FE2DCF02390045601D /* RxSwift */,
+				9BCD44232DCF02990045601D /* Alamofire */,
+				9BCD442B2DCF11990045601D /* SnapKit */,
+				9BCD44592DCF1F000045601D /* Kingfisher */,
+				9BCD44892DCF76570045601D /* RxCocoa */,
+				9BF4BE5F2DD2F4B30021777A /* RxDataSources */,
 			);
 			productName = nbcampPokemonEncyclopedia;
 			productReference = 9B6D91D82DCE4D8600F739E5 /* nbcampPokemonEncyclopedia.app */;
@@ -107,6 +128,13 @@
 			);
 			mainGroup = 9B6D91CF2DCE4D8600F739E5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9BCD43FD2DCF02390045601D /* XCRemoteSwiftPackageReference "RxSwift" */,
+				9BCD44222DCF02990045601D /* XCRemoteSwiftPackageReference "Alamofire" */,
+				9BCD442A2DCF11990045601D /* XCRemoteSwiftPackageReference "SnapKit" */,
+				9BCD44582DCF1F000045601D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9B6D91D92DCE4D8600F739E5 /* Products */;
 			projectDirPath = "";
@@ -146,7 +174,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = nbcampPokemonEncyclopedia/Info.plist;
+				INFOPLIST_FILE = nbcampPokemonEncyclopedia/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -173,7 +201,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = nbcampPokemonEncyclopedia/Info.plist;
+				INFOPLIST_FILE = nbcampPokemonEncyclopedia/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -333,6 +361,82 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9BCD43FD2DCF02390045601D /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
+		9BCD44222DCF02990045601D /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		9BCD442A2DCF11990045601D /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		9BCD44582DCF1F000045601D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+		9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9BCD43FE2DCF02390045601D /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BCD43FD2DCF02390045601D /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		9BCD44232DCF02990045601D /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BCD44222DCF02990045601D /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		9BCD442B2DCF11990045601D /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BCD442A2DCF11990045601D /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		9BCD44592DCF1F000045601D /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BCD44582DCF1F000045601D /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		9BCD44892DCF76570045601D /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BCD43FD2DCF02390045601D /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		9BF4BE5F2DD2F4B30021777A /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BF4BE5E2DD2F4B30021777A /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9B6D91D02DCE4D8600F739E5 /* Project object */;
 }
