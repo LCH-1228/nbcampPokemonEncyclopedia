@@ -51,24 +51,45 @@ nbcampPokemonEncyclopedia는 Swift 학습을 목적으로 작성된 iOS용 포�
 
 ### 파일별 역활
 
-#### View
-- `DetailViewController.swift` : 상세화면 UI 표시
-- `ImageCell.swift` : UICollectionView 커스텀 셀 UI
-- `MainViewController.swift` : 메인화면 UI 표시
-- `SectionHeaderView.swift` : UICollectionView 헤더 UI
+---
 
-#### ViewModel
-- `DetailViewModel.swift` : 상세화면 UI 표시를 위한 뷰 모델
-- `MainViewModel.swift` :  메인화면 UI 표시를 위한 뷰 모델
+#### View
+
+---
+
+##### Base
+- `BaseViewController.swift` : ViewController 구조화를 위한 메서드 정의
+- `BaseViewModel.swift` : ViewModel 구조화를 위한 프로토콜 정의
+
+##### Detail
+- `DetailViewController.swift` : BaseViewController를 상속받아 상세화면 UI 표시
+- `DetailViewModel.swift` : BaseViewModel 프로토콜을 채택하는 상세화면 UI 표시 뷰 모델
+
+##### Main
+- `MainViewController.swift` : BaseViewController를 상속받아 메인화면 UI 표시
+- `MainViewModel.swift` :  BaseViewModel 프로토콜을 채택하는 메인화면 UI 표시 뷰 모델
+- `SectionHeaderView.swift` : UICollectionView 헤더 UI
+- `ImageCell.swift` : UICollectionView 커스텀 셀 UI
+
+---
 
 #### Model
+
+---
+
 - `CollectionViewData.swift` : RxDataSources 사용을 위한 UICollectionView 데이터 구조체 정의
 - `CustomError.swift` : 사용자 정의 타입 에러 정의
+
+##### Network
+- `NetworkManager.swift` : 네트워크 통신을 위한 클래스 정의
 - `DetailResponse.swift` : JSON 디코딩용 구조체 정의
 - `ListResponse.swift` : JSON 디코딩용 구조체 정의
-- `NetworkManager.swift` : 네트워크 통신을 위한 클래스 정의
+
+##### Translation
 - `PokemonKoreanName.swift` : 포켓몬 이름 한글 번역을 위한 열거형 정의
 - `PokemonKoreanType.swift` : 포켓몬 타입 한글 번역을 위한 열거형 정의
+
+---
 
 ### 프로젝트 구조
 ```
@@ -85,21 +106,31 @@ nbcampPokemonEncyclopedia
 │   │   ├── Model
 │   │   │   ├── CollectionViewData.swift
 │   │   │   ├── CustomError.swift
-│   │   │   ├── DetailResponse.swift
-│   │   │   ├── ListResponse.swift
-│   │   │   ├── NetworkManager.swift
-│   │   │   ├── PokemonKoreanName.swift
-│   │   │   └── PokemonKoreanType.swift
-│   │   ├── View
-│   │   │   ├── DetailViewController.swift
-│   │   │   ├── ImageCell.swift
-│   │   │   ├── MainViewController.swift
-│   │   │   └── SectionHeaderView.swift
-│   │   └── ViewModel
-│   │       ├── DetailViewModel.swift
-│   │       └── MainViewModel.swift
+│   │   │   ├── Network
+│   │   │   │   ├── DetailResponse.swift
+│   │   │   │   ├── ListResponse.swift
+│   │   │   │   └── NetworkManager.swift
+│   │   │   └── Translation
+│   │   │       ├── PokemonKoreanName.swift
+│   │   │       └── PokemonKoreanType.swift
+│   │   └── View
+│   │       ├── Base
+│   │       │   ├── BaseViewController.swift
+│   │       │   └── BaseViewModel.swift
+│   │       ├── Detail
+│   │       │   ├── DetailViewController.swift
+│   │       │   └── DetailViewModel.swift
+│   │       └── Main
+│   │           ├── ListCell.swift
+│   │           ├── MainViewController.swift
+│   │           ├── MainViewModel.swift
+│   │           └── SectionHeaderView.swift
 │   └── nbcampPokemonEncyclopedia.xcodeproj
-└── README.md
+├── README.md
+└── SampleImage
+    ├── DetailViewUI.png
+    ├── MainViewUI.png
+    └── Sample.gif
 ```
 
 ## 샘플이미지
