@@ -1,5 +1,5 @@
 //
-//  ImageCell.swift
+//  ListCell.swift
 //  nbcampPokemonEncyclopedia
 //
 //  Created by LCH on 5/10/25.
@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-class ImageCell: UICollectionViewCell {
+final class ListCell: UICollectionViewCell {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
