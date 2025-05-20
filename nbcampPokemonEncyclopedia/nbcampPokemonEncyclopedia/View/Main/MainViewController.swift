@@ -10,9 +10,7 @@ import SnapKit
 import RxSwift
 import RxDataSources
 
-class MainViewController: UIViewController {
-    
-    private let disposeBag = DisposeBag()
+final class MainViewController: BaseViewController {
     
     private let viewModel: MainViewModel
     
@@ -30,36 +28,38 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        configureUI()
-        setConstraints()
+
         setCollectionView()
-        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
     }
     
-    private func configureUI() {
-        view.backgroundColor = .mainRed
+    override func configureUI() {
+        super.configureUI()
         
+        view.backgroundColor = .mainRed
         [
             collectionView
         ].forEach { view.addSubview($0) }
     }
     
-    private func setConstraints() {
+    override func setConstraints() {
+        super.setConstraints()
         
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide.snp.edges)
         }
     }
     
-    private func bind() {
+    override func bind() {
+        super.bind()
+        
         let input = bindInput()
-        bindOutput(with: input)
-        bindCollectionView(with: input)
+        let output = viewModel.transform(input)
+        bindOutput(with: output)
+        bindCollectionView(with: output)
     }
     
     // MARK: - BindInput
@@ -71,8 +71,9 @@ class MainViewController: UIViewController {
                     guard let self else { return false }
                     let contentHeight = collectionView.contentSize.height
                     let frameHeight = collectionView.frame.height
+                    guard contentHeight != 0 && frameHeight != 0 else { return false }
                     let endLocation =  contentHeight - frameHeight
-                    let isEnd = currentLocation.y >= endLocation ? true : false
+                    let isEnd = currentLocation.y > endLocation ? true : false
                     return isEnd
                 }
                 .map { _ in return Void() }
@@ -83,8 +84,7 @@ class MainViewController: UIViewController {
     }
     
     // MARK: BindOutput
-    private func bindOutput(with input: MainViewModel.Input) {
-        let output = viewModel.transform(input)
+    private func bindOutput(with output: MainViewModel.Output) {
         
         output.error
             .subscribe(onNext: { [weak self] error in
@@ -93,18 +93,16 @@ class MainViewController: UIViewController {
     }
     
     // MARK: BindUI
-    private func bindCollectionView(with input: MainViewModel.Input) {
-        let output = viewModel.transform(input)
+    private func bindCollectionView(with output: MainViewModel.Output) {
         
         output.collectionViewData
-            .map{ [$0] }
             .asDriver(onErrorDriveWith: .empty())
             .drive(collectionView.rx.items(dataSource: makeCollectionViewDataSource()))
             .disposed(by: disposeBag)
         
         collectionView.rx.itemSelected
             .withLatestFrom(output.collectionViewData) { indexPath, data in
-                data.items[indexPath.row]
+                data[0].items[indexPath.row]
             }
             .subscribe(onNext: { [weak self] selectedData in
                 guard let self else { return }
@@ -115,8 +113,8 @@ class MainViewController: UIViewController {
     }
     
     private func setCollectionView() {
-        collectionView.register(ImageCell.self,
-                                forCellWithReuseIdentifier: String(describing: ImageCell.self))
+        collectionView.register(ListCell.self,
+                                forCellWithReuseIdentifier: String(describing: ListCell.self))
         collectionView.register(SectionHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: String(describing: SectionHeaderView.self))
@@ -159,8 +157,8 @@ class MainViewController: UIViewController {
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfCustomData> {
             dataSource, collectionView, indexPath, item in
             guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: String(describing: ImageCell.self),
-                for: indexPath) as? ImageCell else { return .init() }
+                withReuseIdentifier: String(describing: ListCell.self),
+                for: indexPath) as? ListCell else { return .init() }
             
             cell.configure(with: item)
             return cell

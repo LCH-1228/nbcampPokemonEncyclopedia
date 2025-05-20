@@ -11,11 +11,9 @@ import RxSwift
 import RxCocoa
 import Kingfisher
 
-class DetailViewController: UIViewController {
+final class DetailViewController: BaseViewController {
     
     private var viewModel: DetailViewModel
-    
-    private let disposeBag = DisposeBag()
     
     private let layoutView: UIView = {
         let view = UIView()
@@ -84,13 +82,10 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         navigationController?.isNavigationBarHidden = false
-        
-        configureUI()
-        setConstraints()
-        bind()
     }
     
-    private func configureUI() {
+    override func configureUI() {
+        super.configureUI()
         
         view.backgroundColor = .mainRed
         
@@ -104,7 +99,8 @@ class DetailViewController: UIViewController {
         ].forEach{ view.addSubview($0) }
     }
     
-    private func setConstraints() {
+    override func setConstraints() {
+        super.setConstraints()
         
         imageView.snp.makeConstraints {
             $0.size.equalTo(200)
@@ -124,10 +120,13 @@ class DetailViewController: UIViewController {
         }
     }
     
-    private func bind() {
+    override func bind() {
+        super.bind()
+        
         let input = bindInput()
-        bindOutput(with: input)
-        BindUI(with: input)
+        let output = viewModel.transform(input)
+        bindOutput(with: output)
+        BindUI(with: output)
     }
     
     // MARK: BindInput
@@ -139,12 +138,10 @@ class DetailViewController: UIViewController {
     }
     
     // MARK: BindOutput
-    private func bindOutput(with input: DetailViewModel.Input) {
-        let output = viewModel.transform(input)
+    private func bindOutput(with output: DetailViewModel.Output) {
         
         output.imageInfo
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] url in
+            .drive { [weak self] url in
                 guard let self else { return }
                 imageView.kf.indicatorType = .activity
                 imageView.kf.setImage(
@@ -157,7 +154,8 @@ class DetailViewController: UIViewController {
                         .keepCurrentImageWhileLoading
                     ]
                 )
-            }).disposed(by: disposeBag)
+            }
+            .disposed(by: disposeBag)
         
         output.error
             .subscribe(onNext: { [weak self] error in
@@ -166,26 +164,21 @@ class DetailViewController: UIViewController {
     }
     
     // MARK: BindUI
-    private func BindUI(with input: DetailViewModel.Input) {
-        let output = viewModel.transform(input)
+    private func BindUI(with output: DetailViewModel.Output) {
         
         output.idAndNameInfo
-            .asDriver(onErrorDriveWith: .empty())
             .drive(nameLabel.rx.text)
             .disposed(by: disposeBag)
         
         output.typeInfo
-            .asDriver(onErrorDriveWith: .empty())
             .drive(typeLabel.rx.text)
             .disposed(by: disposeBag)
         
         output.heightInfo
-            .asDriver(onErrorDriveWith: .empty())
             .drive(heightLabel.rx.text)
             .disposed(by: disposeBag)
         
         output.weightInfo
-            .asDriver(onErrorDriveWith: .empty())
             .drive(weightLabel.rx.text)
             .disposed(by: disposeBag)
     }
