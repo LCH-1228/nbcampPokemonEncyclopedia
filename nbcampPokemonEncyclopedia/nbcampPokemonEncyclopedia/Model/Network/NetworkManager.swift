@@ -8,20 +8,20 @@ import Foundation
 import Alamofire
 import RxSwift
 
-class NetworkManager {
+final class NetworkManager {
     
     static let shared = NetworkManager()
     
     private init() {}
     
     func fetch<T:Decodable>(url: URL) -> Single<T> {
-        return Single.create { observer in
+        return Single.create { single in
             AF.request(url).responseDecodable(of: T.self) { response in
                 switch response.result {
                 case .success(let result):
-                    observer(.success(result))
+                    single(.success(result))
                 case .failure(let error):
-                    observer(.failure(error))
+                    single(.failure(error))
                 }
             }
             return Disposables.create()

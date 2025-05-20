@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SectionHeaderView: UICollectionReusableView {
+final class SectionHeaderView: UICollectionReusableView {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
